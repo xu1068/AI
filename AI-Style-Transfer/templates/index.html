@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>AI智能图片识别系统</title>
+    <style>
+        body {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 0 20px;
+            background: #f7f8fa;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        .title {
+            text-align: center;
+            color: #333;
+        }
+        .user-info {
+            background: #e6f7ff;
+            padding: 16px 20px;
+            border-left: 6px solid #4096ff;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            border-radius: 6px;
+        }
+        .container {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .box {
+            flex: 1;
+            min-width: 320px;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+        button {
+            background: #4096ff;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-top: 12px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f0f7ff;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">AI前沿项目：智能图片内容识别</h1>
+
+    <div class="user-info">
+        学号：202335020545<br>
+        姓名：谢栩正
+    </div>
+
+    <div class="container">
+        <div class="box">
+            <h3>上传图片</h3>
+            <input type="file" id="upload" accept="image/*">
+            <img id="img" style="display:none">
+            <br>
+            <button onclick="aiAnalyze()">开始AI智能分析</button>
+        </div>
+
+        <div class="box">
+            <h3>AI识别结果</h3>
+            <div id="result" class="result">
+                等待AI分析...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const upload = document.getElementById('upload');
+        const img = document.getElementById('img');
+        const result = document.getElementById('result');
+
+        upload.onchange = function(e) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                img.src = ev.target.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+
+        async function aiAnalyze() {
+            if (!img.src) {
+                alert('请先上传图片');
+                return;
+            }
+            const res = await fetch('/analyze', { method: 'POST' });
+            const data = await res.json();
+            result.innerText = data.result;
+        }
+    </script>
+</body>
+</html>
