@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>AI图像风格迁移系统</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        body {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f5f7fa;
+        }
+        .title {
+            text-align: center;
+            color: #333;
+        }
+        .user-info {
+            background: #e8f4fd;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 20px 0;
+            border-left: 6px solid #3498db;
+        }
+        .container {
+            display: flex;
+            gap: 24px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .box {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .box h3 {
+            margin-top: 0;
+            color: #444;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        .param {
+            margin: 14px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">AI前沿项目：图像风格迁移系统</h1>
+
+    <!-- ========== 在这里改成你的学号和姓名 ========== -->
+    <div class="user-info">
+        学号：202XXXXXXX<br>
+        姓名：XXX
+    </div>
+
+    <div class="container">
+        <div class="box">
+            <h3>上传原图</h3>
+            <input type="file" id="uploadImg" accept="image/*">
+            <img id="showInput" style="display: none;">
+
+            <div class="param">
+                风格强度：<span id="valText">0.8</span>
+            </div>
+            <input type="range" id="strength" min="0.1" max="1.0" step="0.1" value="0.8">
+
+            <button onclick="doTransfer()">开始AI风格迁移</button>
+        </div>
+
+        <div class="box">
+            <h3>AI生成结果</h3>
+            <img id="showOutput">
+        </div>
+    </div>
+
+    <script>
+        const upload = document.getElementById('uploadImg');
+        const showInput = document.getElementById('showInput');
+        const showOutput = document.getElementById('showOutput');
+        const strength = document.getElementById('strength');
+        const valText = document.getElementById('valText');
+
+        strength.addEventListener('input', () => {
+            valText.textContent = strength.value;
+        });
+
+        upload.onchange = function (e) {
+            const reader = new FileReader();
+            reader.onload = function (ev) {
+                showInput.src = ev.target.result;
+                showInput.style.display = 'block';
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+
+        async function doTransfer() {
+            if (!showInput.src) {
+                alert('请先上传图片');
+                return;
+            }
+            const fd = new FormData();
+            fd.append('image', showInput.src);
+            fd.append('strength', strength.value);
+
+            const res = await fetch('/transfer', {
+                method: 'POST',
+                body: fd
+            });
+            const data = await res.json();
+            if (data.code === 0) {
+                showOutput.src = data.result;
+            } else {
+                alert('出错：' + data.msg);
+            }
+        }
+    </script>
+</body>
+</html>
